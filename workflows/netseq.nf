@@ -11,7 +11,7 @@ WorkflowNetseq.initialise(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fastas, params.indices]
+def checkPathParamList = [ params.input, params.multiqc_config, params.fasta, params.fastas, params.indices]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
@@ -19,7 +19,7 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 
 if (params.fastas) {ch_fastas = file(params.fastas) } else {exit 1, 'Input reference fasta file not specified'}
 
-//if (params.indices) {ch_indices = file(params.indices) } else {exit 1, 'Input index directory not specified'}
+if (params.indices) {ch_indices = path(params.indices) } else {exit 1, 'Input index directory not specified'}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
