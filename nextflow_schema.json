@@ -297,13 +297,15 @@
     "properties": {
         "fastas": {
             "type": "string",
-            "default": null,
-            "format": "path"
+            "default": "None",
+            "format": "path",
+            "fa_icon": "fas fa-address-book"
         },
         "indices": {
             "type": "string",
-            "default": null,
-            "format": "path"
+            "default": "None",
+            "format": "path",
+            "fa_icon": "fas fa-address-book"
         }
     }
 }
