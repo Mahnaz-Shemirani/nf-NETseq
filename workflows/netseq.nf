@@ -95,8 +95,7 @@ workflow NETSEQ {
 
     SORTMERNA (
       INPUT_CHECK.out.reads,
-      ch_fastas,
-      ch_indices
+      
     )
      ch_versions = ch_versions.mix(SORTMERNA.out.versions.first())
 
