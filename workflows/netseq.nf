@@ -11,11 +11,15 @@ WorkflowNetseq.initialise(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fasta ]
+def checkPathParamList = [ params.input, params.multiqc_config, params.fasta, params.fastas, params.indices]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+
+if (params.fastas) {ch_fastas = file(params.fastas) } else {exit 1, 'Input reference fasta file not specified'}
+
+if (params.indices) {ch_indices = path(params.indices) } else {exit 1, 'Input index directory not specified'}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,10 +52,10 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC                      } from '../modules/nf-core/fastqc/main'
+include { FASTQC  as fqraw            } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
-
+include { SORTMERNA } from '../modules/nf-core/sortmerna/main'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -76,7 +80,7 @@ workflow NETSEQ {
     //
     // MODULE: Run FastQC
     //
-    FASTQC (
+    fqraw (
         INPUT_CHECK.out.reads
     )
     ch_versions = ch_versions.mix(FASTQC.out.versions.first())
@@ -84,6 +88,17 @@ workflow NETSEQ {
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
+
+    //
+    // MODULE: SortMeRNA
+    //
+
+    SORTMERNA (
+      INPUT_CHECK.out.reads,
+      
+    )
+     ch_versions = ch_versions.mix(SORTMERNA.out.versions.first())
+
 
     //
     // MODULE: MultiQC
@@ -99,6 +114,8 @@ workflow NETSEQ {
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(SORTMERNA.out.log).collect{it[1]}.ifEmpty([])
+
 
     MULTIQC (
         ch_multiqc_files.collect(),

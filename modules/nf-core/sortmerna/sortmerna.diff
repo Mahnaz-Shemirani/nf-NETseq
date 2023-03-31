@@ -1,0 +1,22 @@
+Changes in module 'nf-core/sortmerna'
+--- modules/nf-core/sortmerna/main.nf
++++ modules/nf-core/sortmerna/main.nf
+@@ -10,6 +10,8 @@
+     input:
+     tuple val(meta), path(reads)
+     path  fastas
++    path indices
++    
+ 
+     output:
+     tuple val(meta), path("*non_rRNA.fastq.gz"), emit: reads
+@@ -46,6 +48,7 @@
+         """
+         sortmerna \\
+             ${'--ref '+fastas.join(' --ref ')} \\
++            ${'--ref '+indices.join(' --ref ')} \\
+             --reads ${reads[0]} \\
+             --reads ${reads[1]} \\
+             --threads $task.cpus \\
+
+************************************************************
