@@ -56,6 +56,7 @@ include { SEQTK_TRIMFQ } from '../modules//local/seqtk_trimfq/main'
 //
 // MODULE: Installed directly from nf-core/modules
 //
+
 include { FASTQC  as FQRAW                            } from '../modules/nf-core/fastqc/main'
 include { FASTQC as FQSORTMERNA                       } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                                     } from '../modules/nf-core/multiqc/main'
@@ -63,6 +64,7 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS                 } from '../modules/nf-core
 include { SORTMERNA                                   } from '../modules/nf-core/sortmerna/main'
 include { TRIMMOMATIC                                 } from '../modules/nf-core/trimmomatic/main'
 include { FASTP                                       } from '../modules/nf-core/fastp/main'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
