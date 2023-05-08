@@ -1,0 +1,46 @@
+name: seqtk_trimfq
+description: Trims the bases from left end and right end of reads
+keywords:
+  - trimiing
+tools:
+  - seqtk:
+      description: Seqtk is a fast and lightweight tool for processing sequences in the FASTA or FASTQ format
+      homepage: https://github.com/lh3/seqtk
+      documentation: https://docs.csc.fi/apps/seqtk/
+      tool_dev_url: https://github.com/lh3/seqtk
+      licence: ["MIT"]
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test' ]
+  - reads:
+      type: file
+      description: FASTQ/FASTA file
+      pattern:  "*.{fq,fq.gz,fa,fa.gz}"
+  - trim_begining:
+      type: value
+      description: Number of bases to be trimed from the left end of reads
+  - trim_end:
+      type: value
+      description: Number of bases to be trimed from the right end of reads
+ 
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - reads:
+      type: file
+      description: FASTQ file
+      pattern: "*.{fq.gz}"
+
+authors:
+  - "@sidorov-si"
