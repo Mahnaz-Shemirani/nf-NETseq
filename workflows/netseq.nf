@@ -64,6 +64,7 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS                 } from '../modules/nf-core
 include { SORTMERNA                                   } from '../modules/nf-core/sortmerna/main'
 include { TRIMMOMATIC                                 } from '../modules/nf-core/trimmomatic/main'
 include { FASTP                                       } from '../modules/nf-core/fastp/main'
+include { FASTQC as FQTRIMMING                        } from '../modules/nf-core/fastqc/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -155,7 +156,14 @@ workflow NETSEQ {
     )
     ch_versions = ch_versions.mix(SEQTK_TRIMFQ.out.versions)
 
+    //
+    // MODULE: Run fqtrimming
+    //
 
+    FQTRIMMING (
+      SEQTK_TRIMFQ.out.reads
+    )
+    ch_versions = ch_versions.mix(fqaftertrimming.out.versions.first())
 
     //
     // MODULE: MultiQC
@@ -176,6 +184,8 @@ workflow NETSEQ {
     ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(SEQTK_TRIMFQ.out.log).collect{it[1]}.ifEmpty([])
+    ch_multiqc_files = ch_multiqc_files.mix(FQTRIMMING.out.zip.collect{it[1]}.ifEmpty([]))
+
 
     MULTIQC (
         ch_multiqc_files.collect(),
