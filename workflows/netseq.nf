@@ -11,15 +11,15 @@ WorkflowNetseq.initialise(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fasta, params.fastas, params.indices, params.adapter_fasta]
+def checkPathParamList = [ params.input, params.multiqc_config, params.fastas, params.adapter_fasta]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 
-if (params.fastas) {ch_sortmerna_fastas = file(params.fastas) } else {exit 1, 'Input reference fasta file not specified'}
+if (params.fastas) {ch_sortmerna_fastas = params.fastas} else {exit 1, 'Input reference fasta file not specified'}
 
-if (params.indices) {ch_sortmerna_indices = path(params.indices) } else {exit 1, 'Input index directory not specified'}
+//if (params.indices) {ch_sortmerna_indices = params.indices} else {exit 1, 'Input index directory not specified'}
 
 if (params.adapter_fasta) {ch_adapter_fasta = file(params.adapter_fasta) } else {exit 1, 'Input adapter file not specified'}
 
@@ -95,20 +95,15 @@ workflow NETSEQ {
     )
     ch_versions = ch_versions.mix(FQRAW.out.versions.first())
 
-    CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    )
 
     //
     // MODULE: SortMeRNA
     //
 
     SORTMERNA (
-      INPUT_CHECK.out.reads
-      ch_sotmerna_fastas,
-      ch_sortmerna_indices
+      INPUT_CHECK.out.reads,
+      ch_sortmerna_fastas
     )
-
      ch_versions = ch_versions.mix(SORTMERNA.out.versions.first())
 
     //
@@ -120,9 +115,6 @@ workflow NETSEQ {
     )
     ch_versions = ch_versions.mix(FQSORTMERNA.out.versions.first())
 
-    CUSTOM_DUMPSOFTWAREVERSIONS (
-        ch_versions.unique().collectFile(name: 'collated_versions.yml')
-    )
 
     //
     // MODULE: Run Trimmomatic
@@ -137,12 +129,14 @@ workflow NETSEQ {
     // MODULE: Run FastP
     //
 
+
     FASTP (
        TRIMMOMATIC.out.trimmed_reads,
        ch_adapter_fasta,
        params.save_trimmed_fail,
        params.save_merged
     )
+
     ch_versions = ch_versions.mix(FASTP.out.versions)
 
     //
@@ -163,7 +157,11 @@ workflow NETSEQ {
     FQTRIMMING (
       SEQTK_TRIMFQ.out.reads
     )
-    ch_versions = ch_versions.mix(fqaftertrimming.out.versions.first())
+    ch_versions = ch_versions.mix(FQTRIMMING.out.versions.first())
+
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
 
     //
     // MODULE: MultiQC

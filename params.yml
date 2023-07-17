@@ -1,0 +1,11 @@
+input: '/mnt/picea/home/mshemirani/snandeli_NETseq/NETseq/data/raw/samplesheet.csv'
+#igenomes_base: '/mnt/picea/storage/reference'
+genome: 'TAIR10'
+
+fastas: '/mnt/picea/storage/reference/rRNA/sortmerna/v4.3.4/fasta/Athaliana/Arabidopsis_rRNA.fasta'
+indices: '/mnt/picea/storage/reference/rRNA/sortmerna/v4.3.4/indices/Athaliana/smr_v4.3_fast_db_Athaliana_rRNA_snoRNA_tRNA-id90_L10'
+adapter_fasta: '/mnt/picea/home/mshemirani/snandeli_NETseq/NETseq/TrueSeq3-PE-custom.fa'
+trim_begining: 4
+trim_end: 4
+outdir: './test_results'
+
