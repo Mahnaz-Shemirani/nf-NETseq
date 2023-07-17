@@ -10,7 +10,7 @@ process SORTMERNA {
     input:
     tuple val(meta), path(reads)
     path  fastas
-    path indices
+    //path indices
     
 
     output:
@@ -48,7 +48,6 @@ process SORTMERNA {
         """
         sortmerna \\
             ${'--ref '+fastas.join(' --ref ')} \\
-            ${'--ref '+indices.join(' --ref ')} \\
             --reads ${reads[0]} \\
             --reads ${reads[1]} \\
             --threads $task.cpus \\
