@@ -10,11 +10,25 @@ Changes in module 'nf-core/sortmerna'
  
      output:
      tuple val(meta), path("*non_rRNA.fastq.gz"), emit: reads
-@@ -46,6 +48,7 @@
+@@ -22,10 +24,11 @@
+     script:
+     def args = task.ext.args ?: ''
+     def prefix = task.ext.prefix ?: "${meta.id}"
++    
+     if (meta.single_end) {
          """
          sortmerna \\
-             ${'--ref '+fastas.join(' --ref ')} \\
-+            ${'--ref '+indices.join(' --ref ')} \\
+-            ${'--ref '+fastas.join(' --ref ')} \\
++            ${'--ref '+fastas.join(' --ind_dir '+indices)} \\
+             --reads $reads \\
+             --threads $task.cpus \\
+             --workdir . \\
+@@ -45,7 +48,7 @@
+     } else {
+         """
+         sortmerna \\
+-            ${'--ref '+fastas.join(' --ref ')} \\
++            ${'--ref '+fastas.join(' --nd_dir '+indices)} \\
              --reads ${reads[0]} \\
              --reads ${reads[1]} \\
              --threads $task.cpus \\

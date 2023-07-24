@@ -10,7 +10,7 @@ process SORTMERNA {
     input:
     tuple val(meta), path(reads)
     path  fastas
-    //path indices
+    path indices
     
 
     output:
@@ -24,10 +24,11 @@ process SORTMERNA {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    
     if (meta.single_end) {
         """
         sortmerna \\
-            ${'--ref '+fastas.join(' --ref ')} \\
+            ${'--ref '+fastas.join(' --ind_dir '+indices)} \\
             --reads $reads \\
             --threads $task.cpus \\
             --workdir . \\
@@ -47,7 +48,7 @@ process SORTMERNA {
     } else {
         """
         sortmerna \\
-            ${'--ref '+fastas.join(' --ref ')} \\
+            ${'--ref '+fastas.join(' --nd_dir '+indices)} \\
             --reads ${reads[0]} \\
             --reads ${reads[1]} \\
             --threads $task.cpus \\
