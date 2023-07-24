@@ -14,8 +14,9 @@ process SEQTK_TRIMFQ {
     val trim_end
 
     output:
-    tuple val(meta), path("*.fq.gz"), emit: reads
-    path "versions.yml"           , emit: versions
+    tuple val(meta), path("*.fq.gz")   , emit: reads
+    tuple val(meta), path("*.log")     , emit: log
+    path "versions.yml"                , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

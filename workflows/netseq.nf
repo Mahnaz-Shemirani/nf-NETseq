@@ -11,15 +11,15 @@ WorkflowNetseq.initialise(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fastas, params.adapter_fasta]
+def checkPathParamList = [ params.input, params.multiqc_config, params.fastas, params.indices, params.adapter_fasta]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 
-if (params.fastas) {ch_sortmerna_fastas = params.fastas} else {exit 1, 'Input reference fasta file not specified'}
+if (params.fastas) {ch_sortmerna_fastas = params.fastas} else {exit 1, 'Input reference fastas file for sortmerna not specified'}
 
-//if (params.indices) {ch_sortmerna_indices = params.indices} else {exit 1, 'Input index directory not specified'}
+if (params.indices) {ch_sortmerna_indices = params.indices} else {exit 1, 'Input index directory for sortmerna not specified'}
 
 if (params.adapter_fasta) {ch_adapter_fasta = file(params.adapter_fasta) } else {exit 1, 'Input adapter file not specified'}
 
@@ -45,7 +45,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
 include { INPUT_CHECK  } from '../subworkflows/local/input_check'
-include { SEQTK_TRIMFQ } from '../modules//local/seqtk_trimfq/main'
+//include { SEQTK_TRIMFQ } from '../modules//local/seqtk_trimfq/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,7 +102,8 @@ workflow NETSEQ {
 
     SORTMERNA (
       INPUT_CHECK.out.reads,
-      ch_sortmerna_fastas
+      ch_sortmerna_fastas,
+      ch_sortmerna_indices
     )
      ch_versions = ch_versions.mix(SORTMERNA.out.versions.first())
 
@@ -126,9 +127,8 @@ workflow NETSEQ {
      ch_versions = ch_versions.mix(TRIMMOMATIC.out.versions.first())
 
     //
-    // MODULE: Run FastP
+    //MODULE: Run FastP
     //
-
 
     FASTP (
        TRIMMOMATIC.out.trimmed_reads,
@@ -136,28 +136,27 @@ workflow NETSEQ {
        params.save_trimmed_fail,
        params.save_merged
     )
-
     ch_versions = ch_versions.mix(FASTP.out.versions)
 
     //
     // MODULE: Run seqtktrim
     //
 
-    SEQTK_TRIMFQ (
-      FASTP.out.reads,
-      params.trim_begining,
-      params.trim_end
-    )
-    ch_versions = ch_versions.mix(SEQTK_TRIMFQ.out.versions)
+    // SEQTK_TRIMFQ (
+    //   FASTP.out.reads,
+    //   params.trim_begining,
+    //   params.trim_end
+    // )
+    // ch_versions = ch_versions.mix(SEQTK_TRIMFQ.out.versions)
 
-    //
-    // MODULE: Run fqtrimming
-    //
+    // //
+    // // MODULE: Run fqtrimming
+    // //
 
-    FQTRIMMING (
-      SEQTK_TRIMFQ.out.reads
-    )
-    ch_versions = ch_versions.mix(FQTRIMMING.out.versions.first())
+    // FQTRIMMING (
+    //   SEQTK_TRIMFQ.out.reads
+    // )
+    // ch_versions = ch_versions.mix(FQTRIMMING.out.versions.first())
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
@@ -175,14 +174,14 @@ workflow NETSEQ {
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(FQRAW.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(SORTMERNA.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FQSORTMERNA.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.log).collect{it[1]}.ifEmpty([])
-    ch_multiqc_files = ch_multiqc_files.mix(SEQTK_TRIMFQ.out.log).collect{it[1]}.ifEmpty([])
-    ch_multiqc_files = ch_multiqc_files.mix(FQTRIMMING.out.zip.collect{it[1]}.ifEmpty([]))
+    //ch_multiqc_files = ch_multiqc_files.mix(SEQTK_TRIMFQ.out.log).collect{it[1]}.ifEmpty([])
+    // ch_multiqc_files = ch_multiqc_files.mix(FQTRIMMING.out.zip.collect{it[1]}.ifEmpty([]))
+    //ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
 
 
     MULTIQC (

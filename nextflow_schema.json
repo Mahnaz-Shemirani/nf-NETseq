@@ -94,11 +94,11 @@
                     "type": "boolean"
                 },
                 "trim_begining": {
-                    "type": "integer",
+                    "type": "number",
                     "fa_icon": "fas fa-address-book"
                 },
                 "trim_end": {
-                    "type": "integer",
+                    "type": "number",
                     "fa_icon": "fas fa-address-book"
                 },
                 "igenomes_ignore": {
