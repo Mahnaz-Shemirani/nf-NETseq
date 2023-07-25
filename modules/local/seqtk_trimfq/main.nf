@@ -14,9 +14,9 @@ process SEQTK_TRIMFQ {
     val trim_end
 
     output:
-    tuple val(meta), path("*.fq.gz")   , emit: reads
-    tuple val(meta), path("*.log")     , emit: log
-    path "versions.yml"                , emit: versions
+    tuple val(meta), path('*_seqtk.fq.gz')   , emit: reads
+    tuple val(meta), path('*.log')           , emit: log
+    path 'versions.yml'                      , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -37,11 +37,11 @@ process SEQTK_TRIMFQ {
         -b $trim_begining \\
         -e $trim_end \\
         $reads \\
-        | gzip -c > ${prefix}.sektk_trim.fq.gz
+        | gzip -c > ${prefix}_seqtk.fq.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        trimfq: \$(echo \$(seqtk --version 2>&1) | sed 's/^.*seqtk //; s/Using.*\$//' ))
+        seqtk: \$( seqtk --version | sed -e "s/seqtk, version //g" )
     END_VERSIONS
     """
 }

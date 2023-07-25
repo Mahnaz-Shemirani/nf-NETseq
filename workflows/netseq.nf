@@ -11,7 +11,7 @@ WorkflowNetseq.initialise(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fastas, params.indices, params.adapter_fasta]
+def checkPathParamList = [ params.input, params.multiqc_config, params.fastas, params.indices] //, params.adapter_fasta]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
@@ -21,7 +21,7 @@ if (params.fastas) {ch_sortmerna_fastas = params.fastas} else {exit 1, 'Input re
 
 if (params.indices) {ch_sortmerna_indices = params.indices} else {exit 1, 'Input index directory for sortmerna not specified'}
 
-if (params.adapter_fasta) {ch_adapter_fasta = file(params.adapter_fasta) } else {exit 1, 'Input adapter file not specified'}
+//if (params.adapter_fasta) {ch_adapter_fasta = file(params.adapter_fasta) } else {exit 1, 'Input adapter file not specified'}
 
 
 /*
@@ -62,7 +62,7 @@ include { MULTIQC                                     } from '../modules/nf-core
 include { CUSTOM_DUMPSOFTWAREVERSIONS                 } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 include { SORTMERNA                                   } from '../modules/nf-core/sortmerna/main'
 include { TRIMMOMATIC                                 } from '../modules/nf-core/trimmomatic/main'
-include { FASTP                                       } from '../modules/nf-core/fastp/main'
+//include { FASTP                                       } from '../modules/nf-core/fastp/main'
 // include { FASTQC as FQTRIMMING                        } from '../modules/nf-core/fastqc/main'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,13 +128,13 @@ workflow NETSEQ {
     //MODULE: Run FastP
     //
 
-    FASTP (
-       TRIMMOMATIC.out.trimmed_reads,
-       ch_adapter_fasta,
-       params.save_trimmed_fail,
-       params.save_merged
-    )
-    ch_versions = ch_versions.mix(FASTP.out.versions)
+    // FASTP (
+    //    TRIMMOMATIC.out.trimmed_reads,
+    //    ch_adapter_fasta,
+    //    params.save_trimmed_fail,
+    //    params.save_merged
+    // )
+    // ch_versions = ch_versions.mix(FASTP.out.versions)
 
     //
     // MODULE: Run seqtktrim
@@ -176,7 +176,7 @@ workflow NETSEQ {
     ch_multiqc_files = ch_multiqc_files.mix(SORTMERNA.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FQSORTMERNA.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.log).collect{it[1]}.ifEmpty([])
-    ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.log).collect{it[1]}.ifEmpty([])
+    //ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.log).collect{it[1]}.ifEmpty([])
     //ch_multiqc_files = ch_multiqc_files.mix(SEQTK_TRIMFQ.out.log).collect{it[1]}.ifEmpty([])
     // ch_multiqc_files = ch_multiqc_files.mix(FQTRIMMING.out.zip.collect{it[1]}.ifEmpty([]))
     //ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
