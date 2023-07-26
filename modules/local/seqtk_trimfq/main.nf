@@ -24,28 +24,22 @@ process SEQTK_TRIMFQ {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def fq = new File('.')
 
     """
-    ${fq}.eachFileRecurse {
-        do
-            seqtk \\
-                trimfq \\
-                $args \\
-                -b $trim_begining \\
-                -e $trim_end \\
-                $fq \\
-                2> ${prefix}.seqtk.log \\
-                | gzip -c > ${prefix}_seqtk.fq.gz
-        done
-    }
+    seqtk \\
+        trimfq \\
+        $args \\
+        -b $trim_begining \\
+        -e $trim_end \\
+        ${reads} \\
+        2> "${prefix}_seqtk.log" \\
+        | gzip -c > "${prefix}_seqtk.fq.gz"
 
     cat *_seqtk.log > seqtk.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        seqtk: \$( seqtk --version | sed -e "s/seqtk, version //g" )
+        seqtk: \$(echo \$(seqtk 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
     END_VERSIONS
     """
-
 }
