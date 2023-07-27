@@ -177,7 +177,7 @@ workflow NETSEQ {
     ch_multiqc_files = ch_multiqc_files.mix(FQSORTMERNA.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.log).collect{it[1]}.ifEmpty([])
-    ch_multiqc_files = ch_multiqc_files.mix(SEQTK_TRIMFQ.out.log).collect{it[1]}.ifEmpty([])
+    //ch_multiqc_files = ch_multiqc_files.mix(SEQTK_TRIMFQ.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FQTRIMMING.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
 

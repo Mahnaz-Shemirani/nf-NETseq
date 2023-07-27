@@ -15,7 +15,6 @@ process SEQTK_TRIMFQ {
 
     output:
     tuple val(meta), path('*_seqtk.fq.gz')   , emit: reads
-    path('seqtk.log')                        , emit: log
     path 'versions.yml'                      , emit: versions
 
     when:
@@ -28,14 +27,10 @@ process SEQTK_TRIMFQ {
     """
     seqtk \\
         trimfq \\
-        $args \\
         -b $trim_begining \\
         -e $trim_end \\
-        ${reads} \\
-        2> "${prefix}_seqtk.log" \\
+        $reads \\
         | gzip -c > "${prefix}_seqtk.fq.gz"
-
-    cat *_seqtk.log > seqtk.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
