@@ -11,7 +11,7 @@ WorkflowNetseq.initialise(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.fastas, params.indices, params.adapter_fasta]
+def checkPathParamList = [ params.input, params.multiqc_config, params.adapter_fasta, params.fastas, params.indices,]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
@@ -64,6 +64,7 @@ include { SORTMERNA                                   } from '../modules/nf-core
 include { TRIMMOMATIC                                 } from '../modules/nf-core/trimmomatic/main'
 include { FASTP                                       } from '../modules/nf-core/fastp/main'
 include { FASTQC as FQTRIMMING                        } from '../modules/nf-core/fastqc/main'
+include { STAR_ALIGN                                  } from '../modules/nf-core/star/align/main'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -141,7 +142,7 @@ workflow NETSEQ {
     //
 
     SEQTK_TRIMFQ (
-      FASTP.out.reads,
+      FASTP.out.reads.transpose(),
       params.trim_begining,
       params.trim_end
     )
@@ -156,7 +157,22 @@ workflow NETSEQ {
     )
     ch_versions = ch_versions.mix(FQTRIMMING.out.versions.first())
 
-    CUSTOM_DUMPSOFTWAREVERSIONS (
+    //
+    // MODULE: Run star_align
+    //
+
+    STAR_ALIGN (
+      SEQTK_TRIMFQ.out.reads,
+      params.index,
+      params.gtf,
+      params.star_ignore_sjdbgtf,
+      params.seq_platform
+      params.seq_center
+    )
+    ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions.first())
+
+
+     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
 
@@ -177,7 +193,6 @@ workflow NETSEQ {
     ch_multiqc_files = ch_multiqc_files.mix(FQSORTMERNA.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.log).collect{it[1]}.ifEmpty([])
-    //ch_multiqc_files = ch_multiqc_files.mix(SEQTK_TRIMFQ.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FQTRIMMING.out.zip.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
 

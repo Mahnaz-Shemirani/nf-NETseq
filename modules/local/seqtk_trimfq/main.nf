@@ -1,3 +1,5 @@
+// To use this module first define the input chanel in the work flow with .transpose()
+
 process SEQTK_TRIMFQ {
     tag "$meta.id"
     label 'process_medium'
@@ -14,23 +16,22 @@ process SEQTK_TRIMFQ {
     val (trim_end)
 
     output:
-    tuple val(meta), path('*_seqtk.fq.gz')   , emit: reads
-    path 'versions.yml'                      , emit: versions
+    tuple val(meta), path('*.gz')            , emit: reads
+    path "versions.yml"                      , emit: versions
+
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-
     """
     seqtk \\
         trimfq \\
         -b $trim_begining \\
         -e $trim_end \\
-        $reads \\
-        | gzip -c > "${prefix}_seqtk.fq.gz"
+        $reads | \\
+        gzip -c > "${reads.simpleName}.seqtk-trim.fastq.gz"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
