@@ -1,3 +1,5 @@
+// To use this module first define the input chanel in the work flow with .transpose()
+
 process SEQTK_TRIMFQ {
     tag "$meta.id"
     label 'process_medium'
@@ -10,38 +12,30 @@ process SEQTK_TRIMFQ {
 
     input:
     tuple val(meta), path(reads)
-    val trim_begining
-    val trim_end
+    val (trim_begining)
+    val (trim_end)
 
     output:
-    tuple val(meta), path("*.fq.gz")   , emit: reads
-    tuple val(meta), path("*.log")     , emit: log
-    path "versions.yml"                , emit: versions
+    tuple val(meta), path('*.gz')            , emit: reads
+    path "versions.yml"                      , emit: versions
+
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    if ( !trim_begining ) {
-        error "SEQTK/TRIM must have a triming size value included for the beginign of the read"
-    }
-    if ( !trim_end ) {
-        error "SEQTK/TRIM must have a triming size value included for the end of the read"
-    }
     """
     seqtk \\
         trimfq \\
-        $args \\
         -b $trim_begining \\
         -e $trim_end \\
-        $reads \\
-        | gzip -c > ${prefix}.sektk_trim.fq.gz
+        $reads | \\
+        gzip -c > "${reads.simpleName}.seqtk-trim.fastq.gz"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        trimfq: \$(echo \$(seqtk --version 2>&1) | sed 's/^.*seqtk //; s/Using.*\$//' ))
+        seqtk: \$(echo \$(seqtk 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
     END_VERSIONS
     """
 }

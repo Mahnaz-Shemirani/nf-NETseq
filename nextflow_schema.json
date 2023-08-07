@@ -101,6 +101,26 @@
                     "type": "number",
                     "fa_icon": "fas fa-address-book"
                 },
+                "index": {
+                    "type": "string",
+                    "default": "None"
+                },
+                "gtf": {
+                    "type": "string",
+                    "default": "None"
+                },
+                "star_ignore_sjdbgtf": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "seq_platform": {
+                    "type": "string",
+                    "default": "null"
+                },
+                "seq_center": {
+                    "type": "string",
+                    "default": null
+                },
                 "igenomes_ignore": {
                     "type": "boolean",
                     "description": "Do not load the iGenomes reference config.",
@@ -271,6 +291,10 @@
                     "type": "string",
                     "description": "Custom MultiQC yaml file containing HTML including a methods description.",
                     "fa_icon": "fas fa-cog"
+                },
+                "project": {
+                    "type": "string",
+                    "default": "None"
                 },
                 "tracedir": {
                     "type": "string",
