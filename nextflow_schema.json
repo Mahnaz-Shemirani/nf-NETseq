@@ -93,9 +93,9 @@
                 "save_merged": {
                     "type": "boolean"
                 },
-                "trim_begining": {
+                "trim_beginning": {
                     "type": "number",
-                    "fa_icon": "fas fa-address-book"
+                    "default": "fas fa-address-book"
                 },
                 "trim_end": {
                     "type": "number",
@@ -119,7 +119,7 @@
                 },
                 "seq_center": {
                     "type": "string",
-                    "default": null
+                    "default": "None"
                 },
                 "igenomes_ignore": {
                     "type": "boolean",

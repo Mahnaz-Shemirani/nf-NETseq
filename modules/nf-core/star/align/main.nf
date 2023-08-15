@@ -51,6 +51,7 @@ process STAR_ALIGN {
     """
     STAR \\
         --genomeDir $index \\
+        --readFilesCommand zcat \\
         --readFilesIn ${reads1.join(",")} ${reads2.join(",")} \\
         --runThreadN $task.cpus \\
         --outFileNamePrefix $prefix. \\
