@@ -11,7 +11,7 @@ WorkflowNetseq.initialise(params, log)
 
 // TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
-def checkPathParamList = [ params.input, params.multiqc_config, params.adapter_fasta, params.fastas, params.indices,]
+def checkPathParamList = [ params.input, params.multiqc_config, params.adapter_fasta, params.fastas, params.indices]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters
@@ -167,7 +167,7 @@ workflow NETSEQ {
       params.index,
       params.gtf,
       params.star_ignore_sjdbgtf,
-      params.seq_platform
+      params.seq_platform,
       params.seq_center
     )
     ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions.first())
