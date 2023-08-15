@@ -17,11 +17,15 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 
-if (params.fastas) {ch_sortmerna_fastas = params.fastas} else {exit 1, 'Input reference fastas file for sortmerna not specified'}
+if (params.fastas) {ch_sortmerna_fastas = Channel.fromPath(params.fastas)} else {exit 1, 'Input reference fastas file for sortmerna not specified'}
 
-if (params.indices) {ch_sortmerna_indices = params.indices} else {exit 1, 'Input index directory for sortmerna not specified'}
+if (params.indices) {ch_sortmerna_indices = Channel.fromPath(params.indices)} else {exit 1, 'Input index directory for sortmerna not specified'}
 
 if (params.adapter_fasta) {ch_adapter_fasta = file(params.adapter_fasta) } else {exit 1, 'Input adapter file not specified'}
+
+if (params.index) {index_ch = Channel.fromPath(params.index) } else {exit 1, 'Input index directory for STAR alignment not specified'}
+
+if (params. gtf) {gtf_ch   = Channel.fromPath(params.gtf) } else {exit 1, 'Input gtf file for STAR alignment not specified'}
 
 
 /*
@@ -129,6 +133,7 @@ workflow NETSEQ {
     //
     //MODULE: Run FastP
     //
+    //ch_adapter_fasta = Channel.fromPath(params.adapter_fasta)
 
     FASTP (
        TRIMMOMATIC.out.trimmed_reads,
@@ -143,10 +148,11 @@ workflow NETSEQ {
     //
 
     SEQTK_TRIMFQ (
-      FASTP.out.reads.transpose(),
-      params.trim_begining,
+      FASTP.out.reads,
+      params.trim_beginning,
       params.trim_end
     )
+
     ch_versions = ch_versions.mix(SEQTK_TRIMFQ.out.versions)
 
     //
@@ -164,13 +170,13 @@ workflow NETSEQ {
 
     STAR_ALIGN (
       SEQTK_TRIMFQ.out.reads,
-      params.index,
-      params.gtf,
+      index_ch,
+      gtf_ch,
       params.star_ignore_sjdbgtf,
       params.seq_platform,
       params.seq_center
     )
-    ch_versions = ch_versions.mix(STAR_GENOMEGENERATE.out.versions.first())
+    ch_versions = ch_versions.mix(STAR_ALIGN.out.versions.first())
 
 
      CUSTOM_DUMPSOFTWAREVERSIONS (
@@ -195,6 +201,7 @@ workflow NETSEQ {
     ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.log).collect{it[1]}.ifEmpty([])
     ch_multiqc_files = ch_multiqc_files.mix(FQTRIMMING.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(STAR_ALIGN.out.log_final.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
 
 

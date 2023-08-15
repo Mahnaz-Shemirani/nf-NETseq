@@ -12,7 +12,7 @@ process SEQTK_TRIMFQ {
 
     input:
     tuple val(meta), path(reads)
-    val (trim_begining)
+    val (trim_beginning)
     val (trim_end)
 
     output:
@@ -23,12 +23,13 @@ process SEQTK_TRIMFQ {
     when:
     task.ext.when == null || task.ext.when
 
+
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     seqtk \\
         trimfq \\
-        -b $trim_begining \\
+        -b $trim_beginning \\
         -e $trim_end \\
         $reads | \\
         gzip -c > "${reads.simpleName}.seqtk-trim.fastq.gz"
@@ -38,4 +39,5 @@ process SEQTK_TRIMFQ {
         seqtk: \$(echo \$(seqtk 2>&1) | sed 's/^.*Version: //; s/ .*\$//')
     END_VERSIONS
     """
+
 }

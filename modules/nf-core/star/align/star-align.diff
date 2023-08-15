@@ -1,0 +1,18 @@
+Changes in module 'nf-core/star/align'
+--- modules/nf-core/star/align/main.nf
++++ modules/nf-core/star/align/main.nf
+@@ -51,6 +51,7 @@
+     """
+     STAR \\
+         --genomeDir $index \\
++        --readFilesCommand zcat \\
+         --readFilesIn ${reads1.join(",")} ${reads2.join(",")} \\
+         --runThreadN $task.cpus \\
+         --outFileNamePrefix $prefix. \\
+@@ -106,4 +107,4 @@
+         gawk: \$(echo \$(gawk --version 2>&1) | sed 's/^.*GNU Awk //; s/, .*\$//')
+     END_VERSIONS
+     """
+-}
++}
+************************************************************
