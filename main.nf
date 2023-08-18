@@ -22,7 +22,7 @@ params.fasta         = WorkflowMain.getGenomeAttribute(params, 'fasta')
 params.fastas        = WorkflowMain.getGenomeAttribute(params, 'fastas')
 params.indices       = WorkflowMain.getGenomeAttribute(params, 'indices')
 params.adapter_fasta = WorkflowMain.getGenomeAttribute(params, 'adapter_fasta')
-params.index          = WorkflowMain.getGenomeAttribute(params, 'index')
+params.index         = WorkflowMain.getGenomeAttribute(params, 'index')
 params.gtf           = WorkflowMain.getGenomeAttribute(params, 'gtf')
 
 /*
