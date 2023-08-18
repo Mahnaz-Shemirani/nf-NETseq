@@ -17,15 +17,15 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 
-if (params.fastas) {ch_sortmerna_fastas = Channel.fromPath(params.fastas)} else {exit 1, 'Input reference fastas file for sortmerna not specified'}
+if (params.fastas) { ch_sortmerna_fastas = Channel.fromPath("${params.fastas}") } else {exit 1, 'Input reference fastas file for sortmerna not specified'}
 
-if (params.indices) {ch_sortmerna_indices = Channel.fromPath(params.indices)} else {exit 1, 'Input index directory for sortmerna not specified'}
+if (params.indices) { ch_sortmerna_indices = Channel.fromPath("${params.indices}") } else {exit 1, 'Input index directory for sortmerna not specified'}
 
-if (params.adapter_fasta) {ch_adapter_fasta = file(params.adapter_fasta) } else {exit 1, 'Input adapter file not specified'}
+if (params.adapter_fasta) { ch_adapter_fasta = Channel.fromPath("${params.adapter_fasta}") } else {exit 1, 'Input adapter file not specified'}
 
-if (params.index) {index_ch = Channel.fromPath(params.index) } else {exit 1, 'Input index directory for STAR alignment not specified'}
+if (params.index) { index_ch = Channel.fromPath("${params.index}") } else {exit 1, 'Input index directory for STAR alignment not specified'}
 
-if (params. gtf) {gtf_ch   = Channel.fromPath(params.gtf) } else {exit 1, 'Input gtf file for STAR alignment not specified'}
+if (params. gtf) { gtf_ch   = Channel.fromPath("${params.gtf}") } else {exit 1, 'Input gtf file for STAR alignment not specified'}
 
 
 /*
@@ -194,15 +194,15 @@ workflow NETSEQ {
 
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
-    ch_multiqc_files = ch_multiqc_files.mix(FQRAW.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(SORTMERNA.out.log).collect{it[1]}.ifEmpty([])
-    ch_multiqc_files = ch_multiqc_files.mix(FQSORTMERNA.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.log).collect{it[1]}.ifEmpty([])
-    ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.log).collect{it[1]}.ifEmpty([])
-    ch_multiqc_files = ch_multiqc_files.mix(FQTRIMMING.out.zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(STAR_ALIGN.out.log_final.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
+    // ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
+    // ch_multiqc_files = ch_multiqc_files.mix(FQRAW.out.zip.collect{it[1]}.ifEmpty([]))
+    // ch_multiqc_files = ch_multiqc_files.mix(SORTMERNA.out.log).collect{it[1]}.ifEmpty([])
+    // ch_multiqc_files = ch_multiqc_files.mix(FQSORTMERNA.out.zip.collect{it[1]}.ifEmpty([]))
+    // ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.log).collect{it[1]}.ifEmpty([])
+    // ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.log).collect{it[1]}.ifEmpty([])
+    // ch_multiqc_files = ch_multiqc_files.mix(FQTRIMMING.out.zip.collect{it[1]}.ifEmpty([]))
+    // ch_multiqc_files = ch_multiqc_files.mix(STAR_ALIGN.out.log_final.collect{it[1]}.ifEmpty([]))
+    // ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
 
 
     MULTIQC (
