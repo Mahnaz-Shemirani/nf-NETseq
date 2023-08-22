@@ -68,20 +68,7 @@
                     "format": "directory-path",
                     "description": "Directory / URL base for iGenomes references.",
                     "default": "s3://ngi-igenomes/igenomes",
-                    "fa_icon": "fas fa-cloud-download-alt",
-                    "hidden": true
-                },
-                "fastas": {
-                    "type": "string",
-                    "default": "None",
-                    "format": "path",
-                    "fa_icon": "fas fa-address-book"
-                },
-                "indices": {
-                    "type": "string",
-                    "default": "None",
-                    "format": "path",
-                    "fa_icon": "fas fa-address-book"
+                    "fa_icon": "fas fa-cloud-download-alt"
                 },
                 "adapter_fasta": {
                     "type": "string",
@@ -93,29 +80,32 @@
                 "save_merged": {
                     "type": "boolean"
                 },
+                "fastas": {
+                    "type": "string"
+                },
+                "indices": {
+                    "type": "string"
+                },
                 "trim_beginning": {
                     "type": "number",
-                    "default": "fas fa-address-book"
+                    "default": 0
                 },
                 "trim_end": {
                     "type": "number",
-                    "fa_icon": "fas fa-address-book"
+                    "default": 0
                 },
                 "index": {
-                    "type": "string",
-                    "default": "None"
+                    "type": "string"
                 },
                 "gtf": {
-                    "type": "string",
-                    "default": "None"
+                    "type": "string"
                 },
                 "star_ignore_sjdbgtf": {
                     "type": "boolean",
                     "default": true
                 },
                 "seq_platform": {
-                    "type": "string",
-                    "default": "null"
+                    "type": "string"
                 },
                 "seq_center": {
                     "type": "string",

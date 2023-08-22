@@ -5,13 +5,11 @@ process SORTMERNA {
     conda "bioconda::sortmerna=4.3.4"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/sortmerna:4.3.4--h9ee0642_0' :
-        'quay.io/biocontainers/sortmerna:4.3.4--h9ee0642_0' }"
+        'biocontainers/sortmerna:4.3.4--h9ee0642_0' }"
 
     input:
     tuple val(meta), path(reads)
     path  fastas
-    path indices
-    
 
     output:
     tuple val(meta), path("*non_rRNA.fastq.gz"), emit: reads
@@ -24,11 +22,10 @@ process SORTMERNA {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    
     if (meta.single_end) {
         """
         sortmerna \\
-            ${'--ref '+fastas.join(' --ind_dir '+indices)} \\
+            ${'--ref '+fastas.join(' --ref ')} \\
             --reads $reads \\
             --threads $task.cpus \\
             --workdir . \\
@@ -48,7 +45,7 @@ process SORTMERNA {
     } else {
         """
         sortmerna \\
-            ${'--ref '+fastas.join(' --nd_dir '+indices)} \\
+            ${'--ref '+fastas.join(' --ref ')} \\
             --reads ${reads[0]} \\
             --reads ${reads[1]} \\
             --threads $task.cpus \\
