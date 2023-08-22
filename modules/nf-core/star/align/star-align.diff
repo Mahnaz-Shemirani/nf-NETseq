@@ -1,6 +1,15 @@
 Changes in module 'nf-core/star/align'
 --- modules/nf-core/star/align/main.nf
 +++ modules/nf-core/star/align/main.nf
+@@ -9,7 +9,7 @@
+ 
+     input:
+     tuple val(meta), path(reads, stageAs: "input*/*")
+-    path index
++    path star
+     path gtf
+     val star_ignore_sjdbgtf
+     val seq_platform
 @@ -51,6 +51,7 @@
      """
      STAR \\
