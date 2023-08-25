@@ -13,6 +13,11 @@ The directories listed below will be created in the results directory after the 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
 - [FastQC](#fastqc) - Raw read QC
+- [Sortmerna](#sortmerna) -  Sequence alignment tool for filtering, mapping and clustering
+- [Trimmomatic](#trimmomatic) - Trimming  illumina paired-end and single ended data
+- [Fastp](#fastp) - Trimming custom adapters if any
+- [Seqtk](#seqtk) - Trimming the 4 neucleotides from left and right end of sequences if any 
+- [Star](#star) - Align sequences to the reference genome
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
