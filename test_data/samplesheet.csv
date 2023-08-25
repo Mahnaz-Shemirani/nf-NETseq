@@ -1,2 +1,2 @@
 sample,fastq_1,fastq_2
-SAMPLE_SINGLE_END,/mnt/picea/home/mshemirani/Git/nf-core-netseq/test_data/SN_PK2_L1_1_1000.fq.gz,
+SAMPLE_SINGLE_END,/mnt/picea/home/mshemirani/Git/nf-core-netseq/test_data/SN_PK2_L1_1_1000.fq.gz,/mnt/picea/home/mshemirani/Git/nf-core-netseq/test_data/SN_PK2_L1_2_1000.fq.gz
