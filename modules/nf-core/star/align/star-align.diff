@@ -1,15 +1,17 @@
 Changes in module 'nf-core/star/align'
 --- modules/nf-core/star/align/main.nf
 +++ modules/nf-core/star/align/main.nf
-@@ -9,7 +9,7 @@
+@@ -9,8 +9,8 @@
  
      input:
      tuple val(meta), path(reads, stageAs: "input*/*")
--    path index
-+    path star
-     path gtf
+-    tuple val(meta2), path(index)
+-    tuple val(meta3), path(gtf)
++    path(index)
++    path(gtf)
      val star_ignore_sjdbgtf
      val seq_platform
+     val seq_center
 @@ -51,6 +51,7 @@
      """
      STAR \\
@@ -18,10 +20,5 @@ Changes in module 'nf-core/star/align'
          --readFilesIn ${reads1.join(",")} ${reads2.join(",")} \\
          --runThreadN $task.cpus \\
          --outFileNamePrefix $prefix. \\
-@@ -106,4 +107,4 @@
-         gawk: \$(echo \$(gawk --version 2>&1) | sed 's/^.*GNU Awk //; s/, .*\$//')
-     END_VERSIONS
-     """
--}
-+}
+
 ************************************************************
