@@ -31,9 +31,10 @@ On release, automated continuous integration tests run the pipeline on a full-si
 3. QC of reads after sortmerna
 4. Trimming reads using Trimmomatic
 5. Trimming custom adapter using FastP
-6. Trimming 4 nucleotides if any using Seqtk
+6. Trimming extra nucleotides from left and right end of sequences  using Seqtk if any
 7. QC of reads after trimming
-8. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+8. Align the trimmed sequences to reference genome
+9. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Quick Start
 
