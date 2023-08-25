@@ -1,5 +1,3 @@
-// To use this module in paird-end mode first define the input chanel in the work flow with transpose() and remeber that the next step only get single-end input while the meta is paired-end therefore use groupTuple() for the next tool
-
 process SEQTK_TRIMFQ {
     tag "$meta.id"
     label 'process_medium'

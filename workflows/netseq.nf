@@ -107,6 +107,7 @@ workflow NETSEQ {
       ch_sortmerna_fastas
     )
      ch_versions = ch_versions.mix(SORTMERNA.out.versions.first())
+    //SORTMERNA.out.log.view()
 
     //
     // MODULE: Run FastQC
@@ -116,7 +117,7 @@ workflow NETSEQ {
         SORTMERNA.out.reads
     )
     ch_versions = ch_versions.mix(FQSORTMERNA.out.versions.first())
-
+    //FQSORTMERNA.out.zip.view()
 
     //
     // MODULE: Run Trimmomatic
@@ -126,7 +127,7 @@ workflow NETSEQ {
       SORTMERNA.out.reads
     )
      ch_versions = ch_versions.mix(TRIMMOMATIC.out.versions.first())
-
+    //TRIMMOMATIC.out.log.view()
     //
     //MODULE: Run FastP
     //
@@ -139,7 +140,7 @@ workflow NETSEQ {
        params.save_merged
     )
     ch_versions = ch_versions.mix(FASTP.out.versions)
-
+    //FASTP.out.log.view()
     //
     // MODULE: Run seqtktrim
     //
@@ -157,10 +158,10 @@ workflow NETSEQ {
     //
 
     FQTRIMMING (
-      SEQTK_TRIMFQ.out.reads
+      SEQTK_TRIMFQ.out.reads.groupTuple()
     )
     ch_versions = ch_versions.mix(FQTRIMMING.out.versions.first())
-
+    //FQTRIMMING.out.zip.view()
     //
     // MODULE: Run star_align
     //
@@ -174,12 +175,12 @@ workflow NETSEQ {
       params.seq_center
     )
     ch_versions = ch_versions.mix(STAR_ALIGN.out.versions.first())
-
+    //STAR_ALIGN.out.log_final.view()
 
      CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
-
+    //CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.view()
     //
     // MODULE: MultiQC
     //
@@ -218,9 +219,6 @@ workflow NETSEQ {
 */
 
 workflow.onComplete {
-//     if (params.email || params.email_on_fail) {
-//         NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
-//     }
     NfcoreTemplate.summary(workflow, params, log)
     if (params.hook_url) {
         NfcoreTemplate.IM_notification(workflow, params, summary_params, projectDir, log)
